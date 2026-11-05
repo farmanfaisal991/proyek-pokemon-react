@@ -71,6 +71,10 @@ const typeStyles = {
     badge: "bg-[#94A3B8]",
     card: "border-[#94A3B8]/40 bg-[#94A3B8]/10",
   },
+    steel: {
+    badge: "bg-[#94A3B8]",
+    card: "border-[#94A3B8]/40 bg-[#94A3B8]/10",
+  },
 };
 
 export default typeStyles;
