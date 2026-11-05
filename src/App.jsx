@@ -1,13 +1,43 @@
 import Header from "./components/Header";
 import PokemonCard from "./components/PokemonCard";
 import SearchBar from "./components/SearchBar";
+import { useState, useEffect } from "react";
+import { ambilPokemon } from "./api";
 
 function App() {
+  const [pokemon, setPokemon] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function muatData() {
+      try {
+        const data = await ambilPokemon(25);
+        setPokemon(data);
+        console.log(data.types[1])
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    muatData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24">
       <div className="mx-auto max-w-6xl">
         <Header count={0} max={10} />
         <SearchBar />
+        {loading && (
+          <p className="mt-2 text-sm text-slate-400">Memuat data...</p>
+        )}
+        {error && <p className="mt-2 text-sm text-[#EF4444]">{error}</p>}
+        {pokemon && (
+          <p className="mt-2 text-sm text-slate-400">
+            Data masuk: {pokemon.name}
+          </p>
+        )}
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           <PokemonCard
             id={1}
@@ -57,7 +87,7 @@ function App() {
             type2="flying"
             exp={240}
           />
-           <PokemonCard
+          <PokemonCard
             id={7}
             name="Squirtle"
             image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
@@ -65,7 +95,7 @@ function App() {
             type2=""
             exp={63}
           />
-           <PokemonCard
+          <PokemonCard
             id={8}
             name="Wartortle"
             image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"
