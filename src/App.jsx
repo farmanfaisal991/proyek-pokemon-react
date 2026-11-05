@@ -2,19 +2,18 @@ import Header from "./components/Header";
 import PokemonCard from "./components/PokemonCard";
 import SearchBar from "./components/SearchBar";
 import { useState, useEffect } from "react";
-import { ambilPokemon } from "./api";
+import { ambilPokemon, ambilBanyakPokemon } from "./api";
 
 function App() {
-  const [pokemon, setPokemon] = useState(null);
+  const [daftarPokemon, setDaftarPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function muatData() {
       try {
-        const data = await ambilPokemon(25);
-        setPokemon(data);
-        console.log(data.types[1])
+        const data = await ambilBanyakPokemon(1, 20);
+        setDaftarPokemon(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -33,11 +32,6 @@ function App() {
           <p className="mt-2 text-sm text-slate-400">Memuat data...</p>
         )}
         {error && <p className="mt-2 text-sm text-[#EF4444]">{error}</p>}
-        {pokemon && (
-          <p className="mt-2 text-sm text-slate-400">
-            Data masuk: {pokemon.name}
-          </p>
-        )}
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           <PokemonCard
             id={1}
