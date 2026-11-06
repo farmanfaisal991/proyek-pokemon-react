@@ -4,15 +4,23 @@ import SearchBar from "./components/SearchBar";
 import { useState, useEffect } from "react";
 import { ambilPokemon, ambilBanyakPokemon } from "./api";
 
+const jumlahPerHalaman = 25;
+const totalPokemon = 1025;
+const totalHalaman = Math.ceil(totalPokemon / jumlahPerHalaman);
+
 function App() {
   const [daftarPokemon, setDaftarPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [halaman, setHalaman] = useState(1);
 
   useEffect(() => {
     async function muatData() {
+      setLoading(true);
+      setError("");
       try {
-        const data = await ambilBanyakPokemon(1, 20);
+        const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
+        const data = await ambilBanyakPokemon(idAwal, jumlahPerHalaman);
         setDaftarPokemon(data);
       } catch (err) {
         setError(err.message);
@@ -21,10 +29,10 @@ function App() {
       }
     }
     muatData();
-  }, []);
+  }, [halaman]);
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24">
+    <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24 pt-15">
       <div className="mx-auto max-w-6xl">
         <Header count={0} max={10} />
         <SearchBar />
@@ -33,74 +41,37 @@ function App() {
         )}
         {error && <p className="mt-2 text-sm text-[#EF4444]">{error}</p>}
         <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          <PokemonCard
-            id={1}
-            name="Bulbasaur"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-            type1="grass"
-            type2="poison"
-            exp={64}
-          />
-          <PokemonCard
-            id={2}
-            name="Ivysaur"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
-            type1="grass"
-            type2="poison"
-            exp={142}
-          />
-          <PokemonCard
-            id={3}
-            name="Venusaur"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png"
-            type1="grass"
-            type2="poison"
-            exp={236}
-          />
-          <PokemonCard
-            id={4}
-            name="Charmander"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
-            type1="fire"
-            type2=""
-            exp={62}
-          />
-          <PokemonCard
-            id={5}
-            name="Charmeleon"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png"
-            type1="fire"
-            type2=""
-            exp={142}
-          />
-          <PokemonCard
-            id={6}
-            name="Charizard"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
-            type1="fire"
-            type2="flying"
-            exp={240}
-          />
-          <PokemonCard
-            id={7}
-            name="Squirtle"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
-            type1="water"
-            type2=""
-            exp={63}
-          />
-          <PokemonCard
-            id={8}
-            name="Wartortle"
-            image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"
-            type1="water"
-            type2=""
-            exp={142}
-          />
+          {daftarPokemon.map((pokemon) => (
+            <PokemonCard
+              key={pokemon.id}
+              id={pokemon.id}
+              name={pokemon.name}
+              image={pokemon.image}
+              type1={pokemon.type1}
+              type2={pokemon.type2}
+              exp={pokemon.exp}
+            />
+          ))}
+          <div className="mt-6 flex items-center justify-between fixed bottom-0 right-0 left-0 pb-21">
+            <buttn
+              onClick={() => setHalaman(halaman - 1)}
+              disabled={halaman === 1 || loading}
+              className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
+            >
+              Prev
+            </buttn>
+            <button
+              onClick={() => setHalaman(halaman + 1)}
+              disabled={halaman === totalHalaman || loading}
+              className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-[#151B2B] border-t border-[#232B40] p-4 w-full">
-        <button className="cursor-pointer rounded-full border border-[#3B82F6] bg-transparent text-lg font-bold text-[#3B82F6] hover:bg-[#3B82F6] hover:text-[#0B0F1A] w-full p-2.5 ">
+        <button className="cursor-pointer rounded-lg border border-aksen  bg-transparent text-lg font-bold text-aksen hover:bg-aksen hover:text-[#0B0F1A] w-full p-2.5 ">
           View Team (0/10)
         </button>
       </div>
