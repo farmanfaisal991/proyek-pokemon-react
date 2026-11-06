@@ -20,7 +20,9 @@ function App() {
       setError("");
       try {
         const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
-        const data = await ambilBanyakPokemon(idAwal, jumlahPerHalaman);
+        const sisa =totalPokemon - idAwal + 1
+        const jumlah =Math.min( sisa , jumlahPerHalaman )
+        const data = await ambilBanyakPokemon(idAwal,jumlah  );
         setDaftarPokemon(data);
       } catch (err) {
         setError(err.message);
@@ -40,7 +42,7 @@ function App() {
           <p className="mt-2 text-sm text-slate-400">Memuat data...</p>
         )}
         {error && <p className="mt-2 text-sm text-[#EF4444]">{error}</p>}
-        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 capitalize">
           {daftarPokemon.map((pokemon) => (
             <PokemonCard
               key={pokemon.id}
@@ -52,22 +54,25 @@ function App() {
               exp={pokemon.exp}
             />
           ))}
-          <div className="mt-6 flex items-center justify-between fixed bottom-0 right-0 left-0 pb-21">
-            <buttn
-              onClick={() => setHalaman(halaman - 1)}
-              disabled={halaman === 1 || loading}
-              className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
-            >
-              Prev
-            </buttn>
-            <button
-              onClick={() => setHalaman(halaman + 1)}
-              disabled={halaman === totalHalaman || loading}
-              className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
-            >
-              Next
-            </button>
-          </div>
+        </div>
+        <div className="mt-6 flex items-center justify-between">
+          <button
+            onClick={() => setHalaman(halaman - 1)}
+            disabled={halaman === 1 || loading}
+            className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
+          >
+            Prev
+          </button>
+          <p className="text-sm text-slate-400">
+            Halaman {halaman} / {totalHalaman}
+          </p>
+          <button
+            onClick={() => setHalaman(halaman + 1)}
+            disabled={halaman === totalHalaman || loading}
+            className="rounded-full border border-[#232B40] px-4 py-2 text-sm font-bold text-[#F1F5F9] enabled:cursor-pointer enabled:hover:border-aksen disabled:opacity-40"
+          >
+            Next
+          </button>
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-[#151B2B] border-t border-[#232B40] p-4 w-full">
