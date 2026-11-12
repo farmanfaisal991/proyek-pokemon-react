@@ -1,5 +1,7 @@
-async function ambilPokemon(id) {
-  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+async function ambilPokemon(idAtauNama) {
+  const response = await fetch(
+    `https://pokeapi.co/api/v2/pokemon/${idAtauNama}`,
+  );
 
   if (!response.ok) {
     throw new Error(`Gagal mengambil data (status ${response.status})`);
@@ -25,14 +27,34 @@ function rapikanPokemon(data) {
   };
 }
 
-async function ambilBanyakPokemon(idAwal, jumlah) {
-  const daftarId = [];
-  for (let id = idAwal; id < idAwal + jumlah; id++) {
-    daftarId.push(id);
-  }
-  const daftarJanji = daftarId.map((id) => ambilPokemon(id));
+// async function ambilBanyakPokemon(idAwal, jumlah) {
+//   const daftarId = [];
+//   for (let id = idAwal; id < idAwal + jumlah; id++) {
+//     daftarId.push(id);
+//   }
+//   const daftarJanji = daftarId.map((id) => ambilPokemon(id));
+//   const hasil = await Promise.all(daftarJanji);
+
+//   return hasil.map((data) => rapikanPokemon(data));
+// }
+
+async function ambilPokemonDariNama(daftarNama) {
+  const daftarJanji = daftarNama.map((nama) => ambilPokemon(nama));
   const hasil = await Promise.all(daftarJanji);
 
   return hasil.map((data) => rapikanPokemon(data));
 }
-export { ambilPokemon, ambilBanyakPokemon, rapikanPokemon };
+
+async function ambilSemuaNama() {
+  const response = await fetch(
+    "https://pokeapi.co/api/v2/pokemon?limit=1025&offset=0",
+  );
+
+  if (!response.ok) {
+    throw new Error(`Gagal mengambil daftar nama (staus ${response.status})`);
+  }
+  const data = await response.json();
+  return data.results.map((item) => item.name);
+}
+
+export { ambilPokemon, ambilPokemonDariNama, rapikanPokemon, ambilSemuaNama };

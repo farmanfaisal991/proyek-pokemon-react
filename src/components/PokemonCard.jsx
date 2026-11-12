@@ -4,6 +4,7 @@ import typeStyles from "../typeStyles";
 function PokemonCard(props) {
   return (
     <div
+    onClick={props.onklik}
       className={`rounded-xl border p-4 text-center ${typeStyles[props.type1].card}`}
     >
       <p
@@ -26,7 +27,9 @@ function PokemonCard(props) {
           {props.type2 && <TypeBadge type={props.type2} />}
         </div>
 
-        <button className="mt-3 w-full rounded-lg bg-aksen py-2 text-sm font-bold text-[#0B0F1A] cursor-pointer">
+        <button 
+        onClick={(e)=>e.stopPropagation()}
+        className="mt-3 w-full rounded-lg bg-aksen py-2 text-sm font-bold text-[#0B0F1A] cursor-pointer">
           Add to team
         </button>
       </h2>

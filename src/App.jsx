@@ -1,43 +1,116 @@
 import Header from "./components/Header";
 import PokemonCard from "./components/PokemonCard";
 import SearchBar from "./components/SearchBar";
-import { useState, useEffect } from "react";
-import { ambilPokemon, ambilBanyakPokemon } from "./api";
+import { useState, useEffect, useMemo } from "react";
+import { ambilPokemon, ambilPokemonDariNama, ambilSemuaNama } from "./api";
 
 const jumlahPerHalaman = 25;
-const totalPokemon = 1025;
-const totalHalaman = Math.ceil(totalPokemon / jumlahPerHalaman);
 
 function App() {
   const [daftarPokemon, setDaftarPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [halaman, setHalaman] = useState(1);
+  const [semuaNama, setSemuaNama] = useState([]);
+  const [kataCari, setKataCari] = useState("");
+
+  function ubahKatCari(text) {
+    setKataCari(text);
+    setHalaman(1);
+  }
+  
+    // const hasilCari = semuaNama.filter((nama) =>
+    //   nama.includes(kataCari.toLocaleLowerCase().trim()),
+    // );
+  
+    // useEffect(() => {
+    //   async function muatData() {
+    //     setLoading(true);
+    //     setError("");
+    //     try {
+    //       const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
+    //       const sisa = totalPokemon - idAwal + 1;
+    //       const jumlah = Math.min(sisa, jumlahPerHalaman);
+    //       const data = await ambilBanyakPokemon(idAwal, jumlah);
+    //       setDaftarPokemon(data);
+    //     } catch (err) {
+    //       setError(err.message);
+    //     } finally {
+    //       setLoading(false);
+    //     }
+    //   }
+    //   muatData();
+    // }, [halaman]);
 
   useEffect(() => {
+    async function muatNama() {
+      try {
+        const nama = await ambilSemuaNama();
+        setSemuaNama(nama);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    muatNama();
+  }, []);
+
+  const hasilCari = useMemo(() => {
+    return semuaNama.filter((nama) =>
+      nama.includes(kataCari.toLocaleLowerCase().trim()),
+    );
+  }, [semuaNama, kataCari]);
+
+  const totalHalaman = Math.max(
+    1,
+    Math.ceil(hasilCari.length / jumlahPerHalaman),
+  );
+
+  useEffect(() => {
+    if (semuaNama.length === 0) {
+      return;
+    }
+    let masihBerlaku = true;
+
     async function muatData() {
       setLoading(true);
       setError("");
       try {
-        const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
-        const sisa =totalPokemon - idAwal + 1
-        const jumlah =Math.min( sisa , jumlahPerHalaman )
-        const data = await ambilBanyakPokemon(idAwal,jumlah  );
-        setDaftarPokemon(data);
+        const awal = (halaman - 1) * jumlahPerHalaman;
+        const namaHalamanIni = hasilCari.slice(awal, awal + jumlahPerHalaman);
+        const data = await ambilPokemonDariNama(namaHalamanIni);
+        if (masihBerlaku) {
+          setDaftarPokemon(data);
+        }
       } catch (err) {
-        setError(err.message);
+        if (masihBerlaku) {
+          setError(err.massage);
+          setLoading(false);
+        }
       } finally {
-        setLoading(false);
+        if (masihBerlaku) {
+          setLoading(false);
+        }
       }
     }
     muatData();
-  }, [halaman]);
+    return () => {
+      masihBerlaku = false;
+    };
+  }, [hasilCari, halaman]);
+
+  const tidakAdaHasil =
+    !loading && !error && semuaNama.length > 0 && hasilCari.length === 0;
 
   return (
     <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24 pt-15">
       <div className="mx-auto max-w-6xl">
         <Header count={0} max={10} />
-        <SearchBar />
+        <SearchBar kataCari={kataCari} setKataCari={ubahKatCari} />
+        {kataCari && (
+          <p className="mt-2 text-sm text-slate-400">
+            Ditemukan {hasilCari.length} Pokémon
+          </p>
+        )}
         {loading && (
           <p className="mt-2 text-sm text-slate-400">Memuat data...</p>
         )}
@@ -55,6 +128,9 @@ function App() {
             />
           ))}
         </div>
+        {tidakAdaHasil && (
+          <p className="text-white">Tidak ada Pokemon yang cocok dengan "{kataCari}.</p>
+        )}
         <div className="mt-6 flex items-center justify-between">
           <button
             onClick={() => setHalaman(halaman - 1)}
