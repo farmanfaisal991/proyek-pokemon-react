@@ -6,8 +6,8 @@ const labelStat = {
   hp: "HP",
   attack: "Attack",
   defense: "Defense",
-  "spacial-attack": "Sp. Atk",
-  "spacial-defense": "Sp. Def",
+  "special-attack": "Sp. Atk",
+  "special-defense": "Sp. Def",
   speed: "Speed",
 };
 
