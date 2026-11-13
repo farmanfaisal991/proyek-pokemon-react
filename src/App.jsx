@@ -3,6 +3,7 @@ import PokemonCard from "./components/PokemonCard";
 import SearchBar from "./components/SearchBar";
 import { useState, useEffect, useMemo } from "react";
 import { ambilPokemon, ambilPokemonDariNama, ambilSemuaNama } from "./api";
+import DetailModal from "./components/DetailModal";
 
 const jumlahPerHalaman = 25;
 
@@ -13,34 +14,35 @@ function App() {
   const [halaman, setHalaman] = useState(1);
   const [semuaNama, setSemuaNama] = useState([]);
   const [kataCari, setKataCari] = useState("");
+  const [idTerpilih, setIdTerpilih] = useState(null);
 
   function ubahKatCari(text) {
     setKataCari(text);
     setHalaman(1);
   }
-  
-    // const hasilCari = semuaNama.filter((nama) =>
-    //   nama.includes(kataCari.toLocaleLowerCase().trim()),
-    // );
-  
-    // useEffect(() => {
-    //   async function muatData() {
-    //     setLoading(true);
-    //     setError("");
-    //     try {
-    //       const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
-    //       const sisa = totalPokemon - idAwal + 1;
-    //       const jumlah = Math.min(sisa, jumlahPerHalaman);
-    //       const data = await ambilBanyakPokemon(idAwal, jumlah);
-    //       setDaftarPokemon(data);
-    //     } catch (err) {
-    //       setError(err.message);
-    //     } finally {
-    //       setLoading(false);
-    //     }
-    //   }
-    //   muatData();
-    // }, [halaman]);
+
+  // const hasilCari = semuaNama.filter((nama) =>
+  //   nama.includes(kataCari.toLocaleLowerCase().trim()),
+  // );
+
+  // useEffect(() => {
+  //   async function muatData() {
+  //     setLoading(true);
+  //     setError("");
+  //     try {
+  //       const idAwal = (halaman - 1) * jumlahPerHalaman + 1;
+  //       const sisa = totalPokemon - idAwal + 1;
+  //       const jumlah = Math.min(sisa, jumlahPerHalaman);
+  //       const data = await ambilBanyakPokemon(idAwal, jumlah);
+  //       setDaftarPokemon(data);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   muatData();
+  // }, [halaman]);
 
   useEffect(() => {
     async function muatNama() {
@@ -125,11 +127,14 @@ function App() {
               type1={pokemon.type1}
               type2={pokemon.type2}
               exp={pokemon.exp}
+              onKlik={() => setIdTerpilih(pokemon.id)}
             />
           ))}
         </div>
         {tidakAdaHasil && (
-          <p className="text-white">Tidak ada Pokemon yang cocok dengan "{kataCari}.</p>
+          <p className="text-white">
+            Tidak ada Pokemon yang cocok dengan "{kataCari}.
+          </p>
         )}
         <div className="mt-6 flex items-center justify-between">
           <button
@@ -156,6 +161,12 @@ function App() {
           View Team (0/10)
         </button>
       </div>
+      {idTerpilih && (
+        <DetailModal
+          idPokemon={idTerpilih}
+          onTutup={() => setIdTerpilih(null)}
+        />
+      )}
     </div>
   );
 }

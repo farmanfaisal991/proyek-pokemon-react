@@ -27,6 +27,30 @@ function rapikanPokemon(data) {
   };
 }
 
+function rapikanDetail(data) {
+  const dasar = rapikanPokemon(data);
+
+  return {
+    id: dasar.id,
+    name: dasar.name,
+    image: dasar.image,
+    type1: dasar.type1,
+    type2: dasar.type2,
+    exp: dasar.exp,
+    tinggi: data.height / 10,
+    berat: data.weight / 10,
+    stats: data.stats.map((s) => ({
+      nama: s.stat.name,
+      nilai: s.base_stat,
+    })),
+  };
+}
+
+async function ambilDetail(id) {
+  const data = await ambilPokemon(id);
+  return rapikanDetail(data);
+}
+
 // async function ambilBanyakPokemon(idAwal, jumlah) {
 //   const daftarId = [];
 //   for (let id = idAwal; id < idAwal + jumlah; id++) {
@@ -57,4 +81,10 @@ async function ambilSemuaNama() {
   return data.results.map((item) => item.name);
 }
 
-export { ambilPokemon, ambilPokemonDariNama, rapikanPokemon, ambilSemuaNama };
+export {
+  ambilPokemon,
+  ambilPokemonDariNama,
+  rapikanPokemon,
+  ambilSemuaNama,
+  ambilDetail,
+};

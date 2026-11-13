@@ -4,8 +4,8 @@ import typeStyles from "../typeStyles";
 function PokemonCard(props) {
   return (
     <div
-    onClick={props.onklik}
-      className={`rounded-xl border p-4 text-center ${typeStyles[props.type1].card}`}
+    onClick={props.onKlik}
+      className={`cursor-pointer rounded-xl border p-4 text-center ${typeStyles[props.type1].card}`}
     >
       <p
         className="
