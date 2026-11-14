@@ -97,21 +97,27 @@ function DetailModal(props) {
                 <p className="font-bold text-[#F1F5F9]">{detail.berat} kg</p>
               </div>
             </div>
+            <div className="mt-3 rounded-xl bg-[#0B0F1A] p-3 text-center">
+              <p className="text-xs text-slate-400">Kemampuan</p>
+              <p className="font-bold capitalize text-[#F1F5F9]">
+                {detail.abilities.join(", ")}
+              </p>
+            </div>
 
             <div className="mt-4 flex flex-col gap-3">
               {detail.stats.map((s) => (
                 <div key={s.nama}>
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-400">{labelStat[s.nama]}</span>
-                    <span className="font-bold text-[#F1F5F9]">
-                      {s.nilai}
+                    <span className="text-slate-400">
+                      {labelStat[s.nama] || s.nama}
                     </span>
+                    <span className="font-bold text-[#F1F5F9]">{s.nilai}</span>
                   </div>
                   <div className="mt-1 h-2 w-full rounded-b-full bg-[#0B0F1A]">
                     <div
                       className="h-2 rounded-full bg-aksen"
                       style={{
-                        width: `${Math.min(100, (s.nilai / 255) * 100)}%`,
+                        width: `${Math.min(100, (s.nilai / 250) * 100)}%`,
                       }}
                     ></div>
                   </div>

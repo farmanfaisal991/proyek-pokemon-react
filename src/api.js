@@ -43,6 +43,7 @@ function rapikanDetail(data) {
       nama: s.stat.name,
       nilai: s.base_stat,
     })),
+    abilities: data.abilities.map((a) => a.ability.name),
   };
 }
 
