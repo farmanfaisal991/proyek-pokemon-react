@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --color-aksen: #22C55E;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-aksen: #22c55e;
+  --animate-naik: naik 0.25s ease-out;
+
+  @keyframes naik {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
 }

@@ -98,9 +98,21 @@ function DetailModal(props) {
               </div>
             </div>
             <div className="mt-3 rounded-xl bg-[#0B0F1A] p-3 text-center">
-              <p className="text-xs text-slate-400">Kemampuan</p>
-              <p className="font-bold capitalize text-[#F1F5F9]">
-                {detail.abilities.join(", ")}
+              <p className="text-xs text-slate-400 ">Kemampuan</p>
+              <p className="mt-1 flex flex-wrap justify-center gap-2">
+                {detail.abilities.map((a) => (
+                  <span
+                    key={a.name}
+                    className={`rounded-full px-3 py-1 font-bold capitalize ${a.tersembunyi ? "bg-[#F59E0B] text-[#0B0F1A]" : "bg-[#232B40] text-[#F1F5F9]"}`}
+                  >
+                    {a.nama}
+                  </span>
+                ))}
+                {detail.abilities.some((n) => n.tersembunyi) && (
+                  <p className="text-xs text-slate-400 ">
+                    Warna Kuning = kemampuan tersembunyi
+                  </p>
+                )}
               </p>
             </div>
 

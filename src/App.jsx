@@ -4,8 +4,10 @@ import SearchBar from "./components/SearchBar";
 import { useState, useEffect, useMemo } from "react";
 import { ambilPokemon, ambilPokemonDariNama, ambilSemuaNama } from "./api";
 import DetailModal from "./components/DetailModal";
+import TeamModel from "./components/TeamModel";
 
 const jumlahPerHalaman = 25;
+const batasTim = 10;
 
 function App() {
   const [daftarPokemon, setDaftarPokemon] = useState([]);
@@ -15,12 +17,25 @@ function App() {
   const [semuaNama, setSemuaNama] = useState([]);
   const [kataCari, setKataCari] = useState("");
   const [idTerpilih, setIdTerpilih] = useState(null);
+  const [tim, setTim] = useState([]);
+  const [timTerbuka, setTimTerbuka] = useState(false);
 
   function ubahKatCari(text) {
     setKataCari(text);
     setHalaman(1);
   }
 
+  function tambahKeTim(pokemon) {
+    const sudahAda = tim.some((p) => p.id === pokemon.id);
+    if (sudahAda || tim.length >= batasTim) {
+      return;
+    }
+    setTim([...tim, pokemon]);
+  }
+
+  function hapusDariTim(id) {
+    setTim(tim.filter((p) => p.id !== id));
+  }
   // const hasilCari = semuaNama.filter((nama) =>
   //   nama.includes(kataCari.toLocaleLowerCase().trim()),
   // );
@@ -106,7 +121,7 @@ function App() {
   return (
     <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24 pt-15">
       <div className="mx-auto max-w-6xl">
-        <Header count={0} max={10} />
+        <Header count={tim.length} max={batasTim} />
         <SearchBar kataCari={kataCari} setKataCari={ubahKatCari} />
         {kataCari && (
           <p className="mt-2 text-sm text-slate-400">
@@ -128,6 +143,9 @@ function App() {
               type2={pokemon.type2}
               exp={pokemon.exp}
               onKlik={() => setIdTerpilih(pokemon.id)}
+              sudahDiTim={tim.some((p) => p.id === pokemon.id)}
+              timPenuh={tim.length >= batasTim}
+              onTambah={() => tambahKeTim(pokemon)}
             />
           ))}
         </div>
@@ -157,14 +175,25 @@ function App() {
         </div>
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-[#151B2B] border-t border-[#232B40] p-4 w-full">
-        <button className="cursor-pointer rounded-lg border border-aksen  bg-transparent text-lg font-bold text-aksen hover:bg-aksen hover:text-[#0B0F1A] w-full p-2.5 ">
-          View Team (0/10)
+        <button
+          onClick={() => setTimTerbuka(true)}
+          className="cursor-pointer rounded-lg border border-aksen  bg-transparent text-lg font-bold text-aksen hover:bg-aksen hover:text-[#0B0F1A] w-full p-2.5 "
+        >
+          View Team ({tim.length}/{batasTim})
         </button>
       </div>
       {idTerpilih && (
         <DetailModal
           idPokemon={idTerpilih}
           onTutup={() => setIdTerpilih(null)}
+        />
+      )}
+      {timTerbuka && (
+        <TeamModel
+          tim={tim}
+          batasTim={batasTim}
+          onHapus={hapusDariTim}
+          onTutup={() => setTimTerbuka(false)}
         />
       )}
     </div>
