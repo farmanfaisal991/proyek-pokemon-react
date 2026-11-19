@@ -4,7 +4,8 @@ import SearchBar from "./components/SearchBar";
 import { useState, useEffect, useMemo } from "react";
 import { ambilPokemon, ambilPokemonDariNama, ambilSemuaNama } from "./api";
 import DetailModal from "./components/DetailModal";
-import TeamModel from "./components/TeamModel";
+import TeamModal from "./components/TeamModal";
+import { bacaPenyimpanan, simpanPenyimpanan } from "./penyimpanan";
 
 const jumlahPerHalaman = 25;
 const batasTim = 10;
@@ -17,8 +18,51 @@ function App() {
   const [semuaNama, setSemuaNama] = useState([]);
   const [kataCari, setKataCari] = useState("");
   const [idTerpilih, setIdTerpilih] = useState(null);
-  const [tim, setTim] = useState([]);
+  const [tim, setTim] = useState(() => bacaPenyimpanan("deck-tim", []));
   const [timTerbuka, setTimTerbuka] = useState(false);
+  const [namaTim, setNamaTim] = useState("");
+  const [timTersimpan, setTimTersimpan] = useState(() =>
+    bacaPenyimpanan("deck-tersimpan", []),
+  );
+  const [pesanTim, setPesanTim] = useState({ teks: "", sukses: false });
+
+  function ubahNamaTim(teks) {
+    setNamaTim(teks);
+    setPesanTim({ teks: "", sukses: false });
+  }
+
+  function simpanTim() {
+    const nama = namaTim.trim();
+    if (nama === "") {
+      setPesanTim({ teks: "Nama tim wajib diisi.", sukses: false });
+      return;
+    }
+    if (tim.length === 0) {
+      setPesanTim({ teks: "Tim masih kosong", sukses: false });
+      return;
+    }
+
+    const timBaru = { id: Date.now(), nama: nama, anggota: tim };
+    setTimTersimpan([...timTersimpan, timBaru]);
+    setNamaTim("");
+    setPesanTim({ teks: `Tim "${nama}" tersimpan.`, sukses: true });
+  }
+
+  function bukaTim(timTerpilih) {
+    if (tim.length > 0) {
+      const lanjut = window.confirm("Tim aktif akan diganti. Lanjutkan?");
+      if (!lanjut) {
+        return;
+      }
+    }
+    setTim(timTerpilih.anggota);
+    setNamaTim(timTerpilih.nama);
+    setPesanTim({ tekx: 1`Tim "${timTerpilih.nama}" dibuka.`, sukses: true });
+  }
+
+  function hapusTimTersimpan(id) {
+    setTimTersimpan(timTersimpan.filter((t) => t.id !== id));
+  }
 
   function ubahKatCari(text) {
     setKataCari(text);
@@ -36,6 +80,20 @@ function App() {
   function hapusDariTim(id) {
     setTim(tim.filter((p) => p.id !== id));
   }
+
+  function kosongkanSemuaTeam() {
+    setTim([]);
+  }
+
+  function hapusSemuaData() {
+    const lanjut = window.confirm("yakin ingin menghapus semua data?");
+    if (!lanjut) {
+      return;
+    }
+    setTim([]);
+    setTimTersimpan([]);
+  }
+
   // const hasilCari = semuaNama.filter((nama) =>
   //   nama.includes(kataCari.toLocaleLowerCase().trim()),
   // );
@@ -70,6 +128,14 @@ function App() {
     }
     muatNama();
   }, []);
+
+  useEffect(() => {
+    simpanPenyimpanan("deck-tim", tim);
+  }, [tim]);
+
+  useEffect(() => {
+    simpanPenyimpanan("deck-tersimpan", timTersimpan);
+  }, [timTersimpan]);
 
   const hasilCari = useMemo(() => {
     return semuaNama.filter((nama) =>
@@ -119,7 +185,7 @@ function App() {
     !loading && !error && semuaNama.length > 0 && hasilCari.length === 0;
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24 pt-15">
+    <div className="min-h-screen bg-[#0B0F1A] p-4 pb-24 pt-15 ">
       <div className="mx-auto max-w-6xl">
         <Header count={tim.length} max={batasTim} />
         <SearchBar kataCari={kataCari} setKataCari={ubahKatCari} />
@@ -177,7 +243,7 @@ function App() {
       <div className="fixed bottom-0 left-0 right-0 bg-[#151B2B] border-t border-[#232B40] p-4 w-full">
         <button
           onClick={() => setTimTerbuka(true)}
-          className="cursor-pointer rounded-lg border border-aksen  bg-transparent text-lg font-bold text-aksen hover:bg-aksen hover:text-[#0B0F1A] w-full p-2.5 "
+          className="cursor-pointer rounded-lg border border-aksen  bg-transparent text-lg font-bold text-aksen hover:bg-aksen hover:text-[#0B0F1A] w-full p-2.5  "
         >
           View Team ({tim.length}/{batasTim})
         </button>
@@ -189,11 +255,21 @@ function App() {
         />
       )}
       {timTerbuka && (
-        <TeamModel
+        <TeamModal
           tim={tim}
           batasTim={batasTim}
           onHapus={hapusDariTim}
           onTutup={() => setTimTerbuka(false)}
+          kosongkanTeam={kosongkanSemuaTeam}
+          namaTim={namaTim}
+          ubahNamaTim={ubahNamaTim}
+          simpanTim={simpanTim}
+          pesanTim={pesanTim}
+          jumlahTersimpan={timTersimpan.length}
+          timTersimpan={timTersimpan}
+          onBukaTim={bukaTim}
+          onHapusTimTersimpan={hapusTimTersimpan}
+          onHapusSemua={hapusSemuaData}
         />
       )}
     </div>

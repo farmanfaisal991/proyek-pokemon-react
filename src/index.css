@@ -1,9 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+}
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --color-aksen: #22c55e;
-  --animate-naik: naik 0.25s ease-out;
+  --animate-naik: naik 0.35s ease-out;
 
   @keyframes naik {
     from {
