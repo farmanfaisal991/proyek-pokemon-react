@@ -66,6 +66,12 @@ function TeamModal(props) {
               ))}
             </div>
           </div>
+          <button
+            onClick={props.onHapusSemua}
+            className="cursor-pointer rounded-full border w-full border-[#EF4444] text-xs font-bold text-[#EF4444] hover:bg-[#EF4444] hover:text-[#0B0F1A] "
+          >
+            Hapus Semua Data
+          </button>
         </div>
         <div className="border-t border-[#232B40] p-4">
           <input
@@ -85,15 +91,9 @@ function TeamModal(props) {
           <div className="flex flex-center justify-between">
             <button
               onClick={props.simpanTim}
-              className="mt-3 w-full cursor-pointer rounded-full bg-aksen py-1 mr-20 text-sm font-bold text-[#0B0F1A]"
+              className="mt-3 w-full cursor-pointer rounded-full bg-aksen py-1  text-sm font-bold text-[#0B0F1A]"
             >
               Simpan Tim
-            </button>
-            <button
-              onClick={props.onHapusSemua}
-              className="cursor-pointer w-full rounded-full border border-[#EF4444] mt-3 ml-20 text-xs font-bold text-[#EF4444] hover:bg-[#EF4444] hover:text-[#0B0F1A] "
-            >
-              Hapus Semua Data
             </button>
           </div>
         </div>

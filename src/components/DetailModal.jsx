@@ -98,8 +98,8 @@ function DetailModal(props) {
               </div>
             </div>
             <div className="mt-3 rounded-xl bg-[#0B0F1A] p-3 text-center">
-              <p className="text-xs text-slate-400 ">Kemampuan</p>
-              <p className="mt-1 flex flex-wrap justify-center gap-2">
+              <p className="text-xs text-slate-400 mb-2">Kemampuan</p>
+              <p className="flex-1 flex flex-wrap justify-center-safe gap-2">
                 {detail.abilities.map((a) => (
                   <span
                     key={a.name}
@@ -108,12 +108,12 @@ function DetailModal(props) {
                     {a.nama}
                   </span>
                 ))}
-                {detail.abilities.some((n) => n.tersembunyi) && (
-                  <p className="text-xs text-slate-400 ">
-                    Warna Kuning = kemampuan tersembunyi
-                  </p>
-                )}
               </p>
+              {detail.abilities.some((n) => n.tersembunyi) && (
+                <p className="text-xs text-slate-400 mt-2 ">
+                  Warna Kuning = kemampuan tersembunyi
+                </p>
+              )}
             </div>
 
             <div className="mt-4 flex flex-col gap-3">
